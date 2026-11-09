@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Izalmodz Store — Premium Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  /* ============= RESET & VARIABLES ============= */
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+  
+  :root {
+    --bg-base: #050508;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+    --text-main: #f5f5f7;
+    --text-muted: #86868b;
+    --accent: #ffffff;
+    --success: #30d158;
+    --wa: #25D366;
+    --tg: #0088cc;
+    --card-hover: rgba(255, 255, 255, 0.06);
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Latar Belakang Ambience */
+  body::before, body::after {
+    content: ''; position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.3; pointer-events: none;
+  }
+  body::before { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #5e5ce6; }
+  body::after { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: #bf5af2; }
+
+  /* ============= NAVBAR ============= */
+  nav {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    width: calc(100% - 32px); max-width: 1000px; z-index: 100;
+    background: rgba(20, 20, 25, 0.6);
+    backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 32px; padding: 12px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: var(--glass-shadow), var(--glass-highlight);
+  }
+  nav .brand { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+  nav .brand span { font-size: 1.2rem; }
+  
+  .music-btn {
+    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-main); padding: 8px 16px; border-radius: 20px; 
+    font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .music-btn:hover { background: rgba(255, 255, 255, 0.15); }
+  .music-btn.playing { background: rgba(48, 209, 88, 0.15); color: var(--success); border-color: rgba(48, 209, 88, 0.3); }
+
+  /* ============= CONTAINER ============= */
+  .container { max-width: 1000px; margin: 0 auto; padding: 120px 24px 60px; }
+
+  /* ============= HERO ============= */
+  .hero { margin-bottom: 60px; text-align: left; }
+  .hero h1 { 
+    font-size: clamp(2.5rem, 6vw, 4.5rem); 
+    font-weight: 800; 
+    line-height: 1.05; 
+    margin-bottom: 24px;
+    letter-spacing: -2px;
+  }
+  .hero h1 span { color: var(--text-muted); }
+  .hero p { font-size: clamp(1rem, 2vw, 1.1rem); color: var(--text-muted); max-width: 600px; }
+
+  /* ============= SECTION TITLE ============= */
+  .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+  .section-header h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+  .section-header .line { height: 1px; background: linear-gradient(90deg, var(--glass-border), transparent); flex-grow: 1; }
+
+  /* ============= GRID ============= */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+  /* ============= CARD & STYLE PENYIMPANAN PRODUK ============= */
+  .card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 28px; padding: 28px;
+    display: flex; flex-direction: column;
+    box-shadow: var(--glass-shadow), var(--glass-highlight);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, border-color 0.3s;
+    position: relative;
+  }
+  /* Garis aksen tipis di atas kartu saat di-hover */
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 28px; right: 28px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .card:hover::before { opacity: 1; }
+  .card:hover { transform: translateY(-4px) scale(1.01); background: var(--card-hover); border-color: rgba(255,255,255,0.15); }
+
+  .card-badge {
+    align-self: flex-start; font-size: 0.65rem; font-weight: 700;
+    padding: 6px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main); margin-bottom: 20px;
+    letter-spacing: 1px; text-transform: uppercase;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .card h3 { font-size: 1.2rem; margin-bottom: 8px; font-weight: 700; line-height: 1.3; letter-spacing: -0.3px; }
+  .card .price { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main); letter-spacing: -0.5px; }
+  
+  /* Area List Fitur */
+  .card ul { 
+    list-style: none; 
+    margin-bottom: 24px; 
+    flex-grow: 1; 
+    max-height: 190px; 
+    overflow-y: auto; 
+    padding-right: 4px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  /* Hilangkan scrollbar bawaan browser (Webkit) */
+  .card ul::-webkit-scrollbar { display: none; }
+  
+  .card ul li {
+    padding: 9px 0; font-size: 0.85rem; font-weight: 400;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex; align-items: flex-start; gap: 10px; color: var(--text-muted);
+  }
+  .card ul li:last-child { border-bottom: none; }
+  .card ul li::before { 
+    content: '✓'; color: var(--success); font-weight: bold; font-size: 0.9rem; 
+    line-height: 1.4;
+  }
+
+  /* ============= BUTTON RAPI ============= */
+  .btn-buy {
+    background: var(--accent); color: var(--bg-base);
+    border: none; padding: 14px 20px; border-radius: 16px;
+    font-weight: 700; font-size: 0.95rem; cursor: pointer;
+    transition: all 0.2s ease; width: 100%;
+    font-family: inherit; display: flex; justify-content: center; align-items: center; gap: 8px;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+  }
+  .btn-buy:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2); 
+    opacity: 0.95;
+  }
+  .btn-buy:active { transform: translateY(0) scale(0.98); }
+  .btn-buy svg { width: 18px; height: 18px; }
+
+  /* ============= MODAL PEMBAYARAN ============= */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    display: none; justify-content: center; align-items: center;
+    z-index: 1000; padding: 20px; overflow-y: auto;
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal-content {
+    background: rgba(25, 25, 30, 0.8);
+    backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 36px; padding: 40px 32px;
+    max-width: 440px; width: 100%; text-align: center;
+    margin: auto; position: relative;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6), var(--glass-highlight);
+    animation: modalScale 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes modalScale { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .modal-content h2 { font-size: 1.5rem; margin-bottom: 8px; font-weight: 800; letter-spacing: -0.5px; }
+  .product-name { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 4px; }
+  .product-price { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; }
+  .order-id {
+    font-size: 0.75rem; color: var(--text-muted); font-family: monospace;
+    background: rgba(0,0,0,0.3); padding: 8px 16px; border-radius: 12px;
+    display: inline-block; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .qr-box {
+    background: #fff; width: 220px; height: 220px; margin: 0 auto 24px;
+    border-radius: 24px; display: flex; align-items: center; justify-content: center;
+    padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  .qr-box img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+  .qr-box .loading { color: #000; font-size: 0.9rem; font-weight: 600; }
+
+  .pay-btn {
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    text-decoration: none; text-align: center;
+    margin-bottom: 20px; padding: 16px; border-radius: 16px;
+    background: var(--accent); color: var(--bg-base); font-weight: 700; font-size: 0.95rem;
+    transition: all 0.2s; box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+  }
+  .pay-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,255,255,0.2); opacity: 0.95; }
+
+  .status-line {
+    font-size: 0.9rem; font-weight: 600; padding: 14px; border-radius: 16px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+  }
+  .status-line.completed { background: rgba(48, 209, 88, 0.1); border-color: rgba(48, 209, 88, 0.2); color: var(--success); }
+  .status-line.canceled { background: rgba(255, 69, 58, 0.1); border-color: rgba(255, 69, 58, 0.2); color: #ff453a; }
+
+  /* ============= SUCCESS PANEL ============= */
+  .success-panel {
+    margin-top: 24px; text-align: left;
+    background: rgba(0,0,0,0.2); border-radius: 20px; padding: 24px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .success-panel h4 { font-size: 1.1rem; margin-bottom: 8px; color: var(--success); font-weight: 700; }
+  .success-panel p { font-size: 0.85rem; line-height: 1.6; margin-bottom: 16px; color: var(--text-muted); }
+  .msg-preview {
+    background: rgba(0,0,0,0.4); padding: 16px; border-radius: 16px;
+    font-size: 0.8rem; line-height: 1.6; margin-bottom: 16px;
+    font-family: monospace; white-space: pre-wrap; word-break: break-word;
+    max-height: 160px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05);
+    color: var(--text-main);
+  }
+  .contact-btns { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+  .contact-btns a {
+    text-align: center; padding: 14px; border-radius: 14px;
+    text-decoration: none; font-weight: 600; font-size: 0.85rem;
+    color: #fff; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 6px;
+  }
+  .contact-btns a:hover { opacity: 0.9; transform: translateY(-2px); }
+  .btn-wa { background: var(--wa); }
+  .btn-tg { background: var(--tg); }
+
+  .copy-btn {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-main); padding: 14px; border-radius: 14px; font-weight: 600;
+    font-size: 0.85rem; cursor: pointer; width: 100%; margin-bottom: 12px;
+    font-family: inherit; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.15); }
+
+  .close-btn {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
+    width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+    font-size: 1.2rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; line-height: 1;
+  }
+  .close-btn:hover { background: rgba(255,255,255,0.2); color: var(--text-main); }
+
+  .spinner {
+    width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--accent); border-radius: 50%; 
+    animation: spin 0.8s linear infinite; margin: 20px auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ============= FOOTER ============= */
+  footer { 
+    border-top: 1px solid rgba(255,255,255,0.05); 
+    padding: 40px 24px; text-align: center; 
+    color: var(--text-muted); font-size: 0.85rem;
+    max-width: 1000px; margin: 0 auto;
+  }
+  footer .social { display: flex; gap: 24px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+  footer .social a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  footer .social a:hover { color: var(--text-main); }
+
+  /* ============= RESPONSIVE ============= */
+  @media (max-width: 600px) {
+    nav { width: calc(100% - 24px); padding: 10px 16px; top: 12px; }
+    .container { padding: 100px 20px 40px; }
+    .grid { grid-template-columns: 1fr; gap: 16px; }
+    .modal-content { padding: 32px 20px; border-radius: 28px; }
+    .contact-btns { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand"><span>⚡</span> Izalmodz.</div>
+  <button class="music-btn" id="musicBtn">
+    <span id="musicIcon">🔇</span> <span id="musicText">Musik</span>
+  </button>
+</nav>
+
+<audio id="bgMusic" loop>
+  <source src="backsound.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container">
+  <section class="hero">
+    <h1>BERBAGAI<br>PRODUCT<br><span>APLIKASI BUG X RAT</span></h1>
+    <p>Saya Izal menjual berbagai produk aplikasi bug untuk eksploitasi WhatsApp dan mengirim serangan serta RAT (Remote Access Trojan) untuk melakukan penyadapan informasi dan data pada ponsel target.</p>
+  </section>
+
+  <div class="section-header">
+    <h2>Pilih Produk</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="grid" id="productGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:40px;">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2025 Izalmodz Store. All rights reserved.</div>
+  <div class="social">
+    <a href="https://t.me/Izalnotdev" target="_blank">Telegram</a>
+    <a href="https://wa.me/6287871725408" target="_blank">WhatsApp</a>
+    <a href="https://www.tiktok.com/@zalstecu23" target="_blank">TikTok</a>
+    <a href="https://instagram.com/izal_897" target="_blank">Instagram</a>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal-content" id="modalContent"></div>
+</div>
+
+<script>
+const audio = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('musicBtn');
+const musicIcon = document.getElementById('musicIcon');
+const musicText = document.getElementById('musicText');
+let isPlaying = false;
+
+function playMusic() {
+  audio.volume = 0.5;
+  audio.play().then(() => {
+    isPlaying = true;
+    musicBtn.classList.add('playing');
+    musicIcon.innerText = '🔊';
+    musicText.innerText = 'Musik On';
+  }).catch(err => console.log("Autoplay diblokir browser:", err));
+}
+
+function pauseMusic() {
+  audio.pause();
+  isPlaying = false;
+  musicBtn.classList.remove('playing');
+  musicIcon.innerText = '🔇';
+  musicText.innerText = 'Musik';
+}
+
+musicBtn.addEventListener('click', () => {
+  if (isPlaying) pauseMusic();
+  else playMusic();
+});
+
+function autoStartMusic() {
+  if (!isPlaying) playMusic();
+  document.removeEventListener('click', autoStartMusic);
+  document.removeEventListener('touchstart', autoStartMusic);
+  document.removeEventListener('scroll', autoStartMusic);
+}
+
+document.addEventListener('click', autoStartMusic);
+document.addEventListener('touchstart', autoStartMusic);
+document.addEventListener('scroll', autoStartMusic);
+
+// ============ DATA PRODUK & HARGA ============
+const PRODUCTS = [
+  { id: 'ppl_member_1m', badge: 'PPL Project', name: 'PPL Project — Member Sebulan', price: 35000,
+    features: ['Control Camera','Sadap Layar','Lacak Lokasi','Lock Layar','Ambil Contact','Sadap Notif','Intip Akun Gmail','Kill OTP WhatsApp','Menu Bug WA','Menu DDoS','Tools: Alight Motion Premium','Tools: Nekopoi','Tools: Anime','DLL'] },
+  { id: 'ppl_member_perm', badge: 'PPL Project', name: 'PPL Project — Member Permanen', price: 50000,
+    features: ['Semua fitur Member Sebulan','Akses Permanen','Update Fitur Selamanya','Support Prioritas','Tanpa Perpanjangan'] },
+  { id: 'panel_legal', badge: 'Panel', name: 'Panel Legal (Unli Support)', price: 20000,
+    features: ['Unlimited Support','Aktif 30 Hari','Cocok untuk APK Bug aktif','Legal Panel Server','Support 24/7'] },
+  { id: 'panel_python', badge: 'Panel', name: 'Panel Python (Unli)', price: 20000,
+    features: ['Unlimited Panel Python','Aktif 30 Hari','Base Python','Support Prioritas','Auto Install'] },
+  { id: 'jasa_apk_base_lu', badge: 'Jasa APK', name: 'Jasa Buat APK Bug (Base Lu)', price: 20000,
+    features: ['Base dari Lu','Bebas Request Fitur','Nama APK Custom','Logo APK Custom','Bantuan Fix Error','Terima Jadi'] },
+  { id: 'jasa_apk_base_gw', badge: 'Jasa APK', name: 'Jasa Buat APK Bug (Base Gw)', price: 40000,
+    features: ['Base dari Gw','Bebas Request Fitur','Nama APK Custom','Logo APK Custom','Bantuan Fix Error','Terima Jadi'] },
+  { id: 'flux_member', badge: 'FLUX Projects', name: 'FLUX Projects — Member (Permanent)', price: 25000,
+    features: ['Sadap Kontak','Bug Payload','Lock Device','Sadap Layar (Android 6–13)','Sadap Lokasi','Sadap Kamera (Android 6–13)','Sadap SMS','Sadap OTP via Notifikasi','Set Wallpaper','Get Email','Block Akses Aplikasi','Virus Floating (You Are An Idiot)','Reset Device (Setelan Pabrik)','Ganti Password HP','Sadap Storage'] },
+  { id: 'flux_reseller', badge: 'FLUX Projects', name: 'FLUX Projects — Reseller (Permanent)', price: 100000,
+    features: ['Semua Fitur Member','Akses Reseller','Dapat Jual Kembali','Support Prioritas','Virus Custom Bebas'] },
+  { id: 'syam_1d', badge: 'APK Syam', name: 'APK Bug Syam — 1 Hari', price: 2000,
+    features: ['Remote Access Trojan (RAT)','Spam OTP & Pairing Brutal','Crash Perangkat (tanpa izin)','App Lolos Play Protect','Hang Device & Auto Hang','Fitur Gemini AI CLI','Auto Modifikasi App Phising','OSINT (8 Tipe)','Setting Tabungan Pribadi','Setting Tampilan Apps (3D/Ori)','Free Sender Global','Support iOS (Syam Web)','Bug: Forceclose Android','Bug: Forceclose iOS','Bug: Delay Hard Invisible','Bug: Crash Group WhatsApp','Bug: Ban Group WhatsApp'] },
+  { id: 'syam_full', badge: 'APK Syam', name: 'APK Bug Syam — Full Up', price: 45000,
+    features: ['Semua Fitur Paket Akses Full Up','Free Sender Global','Support iOS (Syam Web)','Semua Fitur Work 100%','Bug Menu Lengkap','RAT Control','Prioritas Support'] },
+  { id: 'xvilance_member', badge: 'X-VILANCE', name: 'X-VILANCE — Member', price: 15000,
+    features: ['Delay X Crash','Delay One Hit','Lock Chat','FC iPhone','Crash iPhone','Blank Group V1','Blank Group V2','Banned Group','Sadap HP (RAT Control)','Create AM Premium','Spam OTP','Cek Banned WA','Sender Global','Chat Public','Chat Private','Buat Status','Game','AI Asisten','Ganti Warna APK','Domain OSINT Tools','DDoS Lag Server Panel'] },
+  { id: 'xvilance_vip', badge: 'X-VILANCE', name: 'X-VILANCE — VIP', price: 20000,
+    features: ['Semua Fitur Member','Akses VIP','Prioritas Support','Update Fitur'] },
+  { id: 'xvilance_reseller', badge: 'X-VILANCE', name: 'X-VILANCE — Reseller', price: 30000,
+    features: ['Semua Fitur VIP','Akses Reseller','Dapat Jual Kembali','Support Prioritas'] },
+  { id: 'xvilance_admin', badge: 'X-VILANCE', name: 'X-VILANCE — Admin', price: 40000,
+    features: ['Semua Fitur Reseller','Akses Admin','Full Feature Access','Support Prioritas'] },
+  { id: 'xvilance_partner', badge: 'X-VILANCE', name: 'X-VILANCE — Partner', price: 50000,
+    features: ['Semua Fitur Admin','Akses Partner','Kerjasama Bisnis','Support Prioritas'] },
+  { id: 'xvilance_moderator', badge: 'X-VILANCE', name: 'X-VILANCE — Moderator', price: 60000,
+    features: ['Semua Fitur Partner','Akses Moderator','Kontrol Penuh','Support Prioritas Tertinggi'] }
+];
+
+const grid = document.getElementById('productGrid');
+grid.innerHTML = '';
+
+// Ikon SVG untuk Tombol Beli
+const cartIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>`;
+
+PRODUCTS.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <span class="card-badge">${p.badge}</span>
+    <h3>${p.name}</h3>
+    <div class="price">Rp ${p.price.toLocaleString('id-ID')}</div>
+    <ul>${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
+    <button class="btn-buy" onclick="initiatePayment('${p.id}')">
+      ${cartIcon} Beli Sekarang
+    </button>
+  `;
+  grid.appendChild(card);
+});
+
+const modal = document.getElementById('paymentModal');
+const modalContent = document.getElementById('modalContent');
+let pollTimer = null;
+
+function closeModal() {
+  modal.classList.remove('active');
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+}
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+async function initiatePayment(productId) {
+  modal.classList.add('active');
+  modalContent.innerHTML = `<button class="close-btn" onclick="closeModal()">×</button><div class="spinner"></div><p style="color:var(--text-muted);margin-top:10px;font-weight:500;">Memproses pembayaran...</p>`;
+
+  try {
+    const res = await fetch('/api/create-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'Gagal membuat transaksi');
+    renderPaymentModal(data);
+  } catch (err) {
+    modalContent.innerHTML = `
+      <button class="close-btn" onclick="closeModal()">×</button>
+      <h2 style="color:#ff453a; margin-bottom:16px;">❌ Gagal</h2>
+      <p style="color:var(--text-muted);margin:12px 0;font-size:0.9rem;">${err.message}</p>
+      <p style="color:var(--text-muted);font-size:0.8rem;margin-bottom:24px;">Pastikan server backend sudah menyala (npm start) dan PAKASIR_API_KEY sudah benar.</p>
+      <div class="contact-btns">
+        <a href="https://wa.me/6287871725408" target="_blank" class="btn-wa">WhatsApp</a>
+        <a href="https://t.me/Izalnotdev" target="_blank" class="btn-tg">Telegram</a>
+      </div>
+    `;
+  }
+}
+
+function renderPaymentModal(data) {
+  const qrUrl = data.qr_string ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(data.qr_string)}` : '';
+
+  modalContent.innerHTML = `
+    <button class="close-btn" onclick="closeModal()">×</button>
+    <h2>Pembayaran</h2>
+    <div class="product-name">${data.product_name}</div>
+    <div class="product-price">Rp ${data.amount.toLocaleString('id-ID')}</div>
+    <div class="order-id">Order ID: ${data.order_id}</div>
+    <div class="qr-box">
+      ${qrUrl ? `<img src="${qrUrl}" alt="QRIS" onerror="this.parentNode.innerHTML='<span class=loading>QR tidak tersedia</span>';" />` : '<span class="loading">Memuat QR...</span>'}
+    </div>
+    <a href="${data.payment_link}" target="_blank" class="pay-btn">🔗 Buka Halaman Pembayaran</a>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:20px;">Scan QR atau klik tombol di atas untuk membayar.</p>
+    <div class="status-line" id="statusLine">⏳ Menunggu pembayaran...</div>
+    <div id="successArea"></div>
+  `;
+
+  startPolling(data.order_id, data.amount, data.product_name);
+}
+
+function startPolling(orderId, amount, productName) {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/check-status?orderId=${orderId}`);
+      const data = await res.json();
+      const statusEl = document.getElementById('statusLine');
+      if (!statusEl) return;
+
+      if (data.status === 'completed') {
+        clearInterval(pollTimer); pollTimer = null;
+        statusEl.className = 'status-line completed';
+        statusEl.innerText = '✅ Pembayaran Berhasil!';
+        showSuccess(orderId, amount, productName, data.txn_id);
+      } else if (data.status === 'canceled') {
+        clearInterval(pollTimer); pollTimer = null;
+        statusEl.className = 'status-line canceled';
+        statusEl.innerText = '❌ Pembayaran Dibatalkan';
+      }
+    } catch (e) { /* diamkan */ }
+  }, 4000);
+}
+
+function showSuccess(orderId, amount, productName, txnId) {
+  const trxId = txnId || orderId;
+  const pesan = `Halo Admin Izalmodz, saya sudah melakukan pembayaran.
+
+🛒 Produk: ${productName}
+💰 Harga: Rp ${amount.toLocaleString('id-ID')}
+🆔 ID Transaksi: ${trxId}
+
+Mohon diproses ya. Terima kasih.`;
+
+  const waLink = `https://wa.me/6287871725408?text=${encodeURIComponent(pesan)}`;
+  const tgLink1 = `https://t.me/Izalnotdev?text=${encodeURIComponent(pesan)}`;
+  const tgLink2 = `https://t.me/Izalmodz?text=${encodeURIComponent(pesan)}`;
+
+  document.getElementById('successArea').innerHTML = `
+    <div class="success-panel">
+      <h4>✅ Pembayaran Terverifikasi</h4>
+      <p>Silakan hubungi admin dan kirim <b>bukti screenshot</b> pembayaran + pesan berikut:</p>
+      <div class="msg-preview" id="msgPreview">${pesan}</div>
+      <button class="copy-btn" onclick="copyPesan()">📋 Salin Pesan</button>
+      <div class="contact-btns">
+        <a href="${waLink}" target="_blank" class="btn-wa">WhatsApp</a>
+        <a href="${tgLink1}" target="_blank" class="btn-tg">Telegram 1</a>
+        <a href="${tgLink2}" target="_blank" class="btn-tg" style="grid-column: span 2;">Telegram 2</a>
+      </div>
+    </div>
+  `;
+}
+
+function copyPesan() {
+  const txt = document.getElementById('msgPreview').innerText;
+  navigator.clipboard.writeText(txt).then(() => {
+    alert('Pesan berhasil disalin!');
+  }).catch(() => {
+    alert('Gagal menyalin. Silakan salin manual.');
+  });
+}
+</script>
+</body>
+</html>
